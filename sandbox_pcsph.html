@@ -1,0 +1,280 @@
+<html>
+    <head>
+        <title>HTML5 Canvas - Sandbox Particle Engine</title>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="resources/main.css">
+    </head>
+</html>
+<body>
+	
+	<div id="gui_container"></div>
+	
+	<div class = "states">
+		<div class = "solid">
+			<input type = "radio" name="select_button" id = "solid">
+			<label for = "solid"  class = "fa-solid fa-square"></label>
+		</div>
+		
+		<div class = "powder">
+			<input type = "radio" name="select_button" id = "powder">
+			<label for = "powder" class = "fa-solid fa-cubes-stacked"></label>
+		</div>
+		
+		<div class = "fluid">
+			<input type = "radio" name="select_button" id = "fluid" checked = "checked">
+			<label for = "fluid" class = "fa-solid fa-shower"></label>
+		</div>
+		
+		<div class = "interact">
+			<input type = "radio" name="select_button" id = "interact">
+			<label for = "interact" class = "fa-solid fa-fingerprint"></label>
+		</div>
+		
+		<div class = "remove">
+			<input type = "radio" name="select_button" id = "remove">
+			<label for = "remove" class = "fa-solid fa-eraser"></label>
+		</div>
+	</div>
+	
+	<div>
+		<canvas class = "canvas" id = "display" width = "960" height = "540" style = "border : 2px solid #474747;"/>
+	</div>
+    
+    <script src="https://kit.fontawesome.com/48db9265f6.js" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+	<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+	<script type="text/javascript" src="resources/dat_gui_info.js"></script>
+	<script type="text/javascript" src="resources/vector2.js"></script>
+    <script>
+		var gui = new dat.GUI({ autoPlace: false, closeOnTop : true, width : 224});
+		gui.domElement.id = 'gui';
+		gui_container.appendChild(gui.domElement);
+
+		var params = {
+			smoothingRadius: 16,
+			gravity: 4,
+			mass: 1,
+			wind: 0,
+			restDensity: 1,
+			stiffness: 0.2,
+			stiffnessNear: 0.08,
+			elasticity: 0.9,
+			viscosity: 0.3,
+			friction: 0,
+			brushSize: 100,
+			particleShape: "Square",
+			colour: {
+				h: 0,
+				s: 0.5,
+				v: 0.4
+			},
+			canvasColour: {h : 0, s : 0, v: 0.13},
+			particleSize: 6,
+			hueMult: 50,
+			satMult: 0.05,
+			valMult: 0.05,
+
+		};
+
+		function addSettings() {
+			var constants = gui.addFolder("Constants");
+			var globals = gui.addFolder("Globals");
+			var singles = gui.addFolder("Per-Particle");
+			var looks = gui.addFolder("Aesthetics");
+			
+			constants.add(params, "restDensity", 0.1, 10, 0.1).name("Density");
+			constants.add(params, "smoothingRadius", 1, 50, 2).name("Smoothing");
+			constants.add(params, "stiffness", 0.001, 5, 0.001).name("Stiffness");
+			
+			globals.add(params, "gravity", -10, 10, 0.1).name("Gravity");
+			globals.add(params, "wind", -10, 10, 0.1).name("Wind");
+			globals.add(params, "brushSize", 1, 150, 1).name("Radius");
+			
+			singles.add(params, "elasticity", 0, 1, 0.1).name("Bounce");
+			singles.add(params, "friction", 0, 20, 0.5).name("Friction");
+			singles.add(params, "viscosity", 0, 1000, 0.1).name("Viscosity");
+			singles.add(params, "mass", 0.1, 2, 0.1).name("Mass");
+			
+			looks.add(params, "particleSize", 2, 24, 0.1).name("Size");
+			looks.add(params, "particleShape", ["Square", "Circle"]).name("Shape");
+			looks.add(params, "hueMult",1,1000).name("Hue");
+			looks.add(params, "satMult",0.001,1).name("Saturation");
+			looks.add(params, "valMult",0.001,1).name("Brightness");
+			looks.addColor(params, "colour").name("Colour");
+			looks.addColor(params, "canvasColour").name("Background");
+			
+			gui.add(params, "clearAll").name("Clear All");
+			gui.add(params, "damBreak").name("Dam Break");
+			
+			constants.open();
+			singles.open();
+			globals.open();
+			looks.open();
+
+			for (let i = 0; i < constants.__ul.childNodes.length; i += 1) {
+				constants.__ul.childNodes[i].id = constants.__ul.childNodes[i].innerText;
+			}
+
+			for (let i = 0; i < singles.__ul.childNodes.length; i += 1) {
+				singles.__ul.childNodes[i].id = singles.__ul.childNodes[i].innerText;
+			}
+
+			for (let i = 0; i < globals.__ul.childNodes.length; i += 1) {
+				globals.__ul.childNodes[i].id = globals.__ul.childNodes[i].innerText;
+			}
+
+			for (let i = 0; i < looks.__ul.childNodes.length; i += 1) {
+				if (i == 2) {
+					looks.__ul.childNodes[i].id = looks.__ul.childNodes[i].childNodes[0].childNodes[0].innerHTML;
+				} else {
+					looks.__ul.childNodes[i].id = looks.__ul.childNodes[i].innerText;
+				}
+				
+			}
+
+			tippy.setDefaultProps({
+				maxWidth: 160,
+				placement: "left-end",
+				animation: "scale",
+				duration: 250,
+			});
+			
+			new tippy("#Constants", {
+				content : "These parameters should be changed sparingly.",
+			});
+			
+			new tippy("#Density", {
+				maxWidth: 100,
+				content: "The rest density.",
+			});
+			
+			new tippy("#Smoothing", {
+				maxWidth: 220,
+				content: "The distance particles check for other particles. Higher is laggier.",
+			});
+			
+			new tippy("#Stiffness", {
+				content: "Affects the stiffness of the fluid.",
+			});
+			
+			new tippy("#Globals", {
+				maxWidth: 170,
+				content: "These settings affect all particles immediately.",
+			});
+			
+			new tippy("#Gravity", {
+				maxWidth : 120,
+				content: "Pulls particles down - or up.",
+			});
+			
+			new tippy("#Wind", {
+				maxWidth : 80,
+				content: "Horizontal gravity.",
+			});
+			
+			new tippy("#Radius", {
+				maxWidth : 90,
+				content: "Changes the brush size.",
+			});
+			
+			new tippy("#Per-Particle", {
+				content: "These settings affect particles pre-creation.",
+			});
+			
+			new tippy("#Bounce", {
+				maxWidth: 170,
+				content: "Changes how much particles bounce off the walls.",
+			});
+
+			new tippy("#Friction", {
+				maxWidth: 140,
+				content: "Makes particles slow down on walls.",
+			});
+			
+			new tippy("#Viscosity", {
+				maxWidth : 120,
+				content: "Subtly changes fluid viscosity.",
+			});
+			
+			new tippy("#Mass", {
+				maxWidth : 140,
+				content: "Changes the impact particles have against each other.",
+			});
+			
+			new tippy("#Aesthetics", {
+				content: "These changes are purely visual.",
+			});
+			
+			new tippy("#Size", {
+				content: "Changes the size of particles.",
+			});
+			
+			new tippy("#Shape", {
+				content: "Changes the shape of particles.",
+			});
+			
+			new tippy("#Hue", {
+				maxWidth : 120,
+				content: "How much the hue is affected by the pressure.",
+			});
+			
+			new tippy("#Saturation", {
+				maxWidth : 170,
+				content: "How much the saturation is affected by the velocity.",
+			});
+			
+			new tippy("#Brightness", {
+				maxWidth : 180,
+				content: "How much the brightness is affected by the density.",
+			});
+			
+			new tippy("#Colour", {
+				content: "Changes the colour of new particles.",
+			});
+			
+			new tippy("#Background", {
+				content: "Changes the colour of the canvas background.",
+			});
+			
+			tippy.setDefaultProps({
+				getReferenceClientRect: () => ({
+					width : 10,
+					height : 10,
+					bottom : 0,
+					right : 0,
+					top : 594,
+					left : 60,
+				}),
+				popperOptions: {
+    				strategy: "fixed",
+				},
+				maxWidth : "none",
+				arrow : false,
+				placement : "left-start",
+				theme : "textonly",
+			});
+			
+			new tippy(".solid", {
+				content: "Drag and drop to create walls. Right click to delete.",
+			});
+			
+			new tippy(".powder", {
+				content: "Adds a small amount of powder to the world. High friction recommended. This is old code and does not work very well.",
+			});
+			
+			new tippy(".fluid", {
+				content: "Adds simple fluids to the world. High bounce and low friction recommended.",
+			});
+			
+			new tippy(".interact", {
+				content: "Click or hold to push particles away. Right click once to suck them in.",
+			});
+			
+			new tippy(".remove", {
+				content: "Click and hold to remove particles.",
+			});
+		}
+        
+    </script>
+    <script type="text/javascript" src="mainSPH.js"></script>
+</body>
