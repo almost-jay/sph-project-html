@@ -1,0 +1,469 @@
+
+body {
+	font-family : "Roboto Mono", monospace;
+	background-color : rgb(6, 6, 6);
+	color : rgb(249, 249, 249);
+}
+
+.states {
+	padding: 0;
+	margin: 0;
+	position: relative;
+	display : block;
+	top: 10%;
+}
+
+.states label {
+	text-align: center;
+	font-size : 28;
+	color : #666;
+	background-color : #333333;
+	display : block;
+	height : 60px;
+	width : 60px;
+	line-height: 60px;
+	border-radius : 12px;
+	margin-top: 2%; 
+	
+}
+
+.states input[type = "radio"]:hover + label {
+	background-color: #555;
+	color : #ccc;
+	cursor: pointer;
+}
+
+.states input[type = "radio"]:checked + label {
+	background-color: #2fa1d6;
+	color : white;
+}
+
+.states input[type = "radio"] {
+	opacity : 0;
+	width : 0;
+	height : 0;
+}
+
+.tippy-box[data-theme~="textonly"] {
+	background-color: #FAFAFA20;
+	color : white;
+}
+
+.tippy-box[data-animation=scale][data-placement^=top] {
+	transform-origin : bottom;
+}
+
+.tippy-box[data-animation=scale][data-placement^=bottom] {
+	transform-origin : top;
+}
+
+.tippy-box[data-animation=scale][data-placement^=left] {
+	transform-origin : right;
+}
+
+.tippy-box[data-animation=scale][data-placement^=right] {
+	transform-origin : left;
+}
+
+.tippy-box[data-animation=scale][data-state=hidden] {
+	transform:scale(.5);opacity : 0;
+}
+
+.tippy-box {
+	font-size : 60%;
+	text-align : center;
+	padding-right : 10px;
+	font-style: italic;
+	transition-timing-function: cubic-bezier(0.175, 0.985, 0.12, 1.275); 
+}
+
+.canvas {
+	position : absolute;
+	top : 32px;
+	left : 80px;
+	cursor : crosshair;
+}
+
+#gui_container {
+  	position: absolute;
+	top: 0px;
+	right: 10px;
+	user-select : none;
+	z-index: 1;
+}
+
+.dg ul{
+    list-style:none;
+    margin:0;
+    padding:0;
+    clear:both
+}
+.dg.ac{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:0;
+    z-index:0
+}
+.dg:not(.ac) .main{
+    overflow:hidden
+}
+.dg.main{
+    -webkit-transition:opacity .1s linear;
+    -o-transition:opacity .1s linear;
+    -moz-transition:opacity .1s linear;
+    transition:opacity .1s linear
+}
+.dg.main.taller-than-window{
+    overflow-y:auto
+}
+.dg.main.taller-than-window .close-button{
+    opacity:1;
+    margin-top:-1px;
+    border-top:1px solid #2c2c2c
+}
+.dg.main ul.closed .close-button{
+    opacity:1 !important
+}
+.dg.main:hover .close-button,.dg.main .close-button.drag{
+    opacity:1
+}
+.dg.main .close-button{
+    -webkit-transition : opacity .1s linear;
+    -o-transition : opacity .1s linear;
+    -moz-transition : opacity .1s linear;
+    transition : opacity .1s linear;
+    border : 0;
+    line-height : 18px;
+    height : 20px;
+    cursor : pointer;
+    text-align : center;
+    background-color: #111
+}
+.dg.main .close-button.close-top{
+    position:relative
+}
+.dg.main .close-button.close-bottom{
+    position:absolute
+}
+.dg.main .close-button:hover{
+    background-color : #000
+}
+.dg.a{
+    float:right;
+    margin-right : 15px;
+    overflow-y : visible
+}
+.dg.a.has-save>ul.close-top{
+    margin-top : 0
+}
+.dg.a.has-save>ul.close-bottom{
+    margin-top : 22px
+}
+.dg.a.has-save>ul.closed{
+    margin-top : 0
+}
+.dg.a .save-row{
+    top : 0;
+    z-index : 1002
+}
+.dg.a .save-row.close-top{
+    position : relative
+}
+.dg.a .save-row.close-bottom{
+    position : fixed
+}
+.dg li{
+    -webkit-transition:height .1s ease-out;
+    -o-transition:height .1s ease-out;
+    -moz-transition:height .1s ease-out;
+    transition:height .1s ease-out;
+    -webkit-transition:overflow .1s linear;
+    -o-transition:overflow .1s linear;
+    -moz-transition:overflow .1s linear;
+    transition:overflow .1s linear
+}
+.dg li:not(.folder){
+    cursor:auto;
+	vertical-align: baseline;
+    height:20px;
+    line-height:18px;
+    padding:0 2px 0 8px
+}
+.dg li.folder{
+    padding:0;
+    border-left:4px solid rgba(0,0,0,0)
+}
+.dg li.title{
+    cursor:pointer;
+    margin-left:-4px
+}
+.dg .closed li:not(.title),.dg .closed ul li,.dg .closed ul li>*{
+    height:0;
+    overflow:hidden;
+    border:0
+}
+.dg .cr{
+    clear:both;
+    padding-left:3px;
+    height:18px;
+    overflow:hidden
+}
+.dg .property-name{
+	padding-top : 2.4px;
+	padding-right : 0px;
+    cursor:default;
+    float:left;
+    clear:left;
+    width:40%;
+    overflow:hidden;
+    text-overflow:ellipsis
+}
+.dg .cr.function .property-name{
+    width:100%
+}
+.dg .c{
+	right : 6px;
+    float:left;
+    width:60%;
+    position:relative;
+}
+.dg .c input[type=text]{
+    border:0;
+    margin-top:1.8px;
+	margin-right : 8px;
+	padding : 4px;
+    width:86%;
+    float:right;
+}
+.dg .has-slider input[type=text]{
+    width:24%;
+	margin-top : 2.4px;
+	height : 80%;
+    margin-left:0
+}
+.dg .slider{
+    float:left;
+    width:66%;
+    margin-left:-5px;
+    margin-right:0;
+    height:16px;
+    margin-top:4px;
+}
+.dg .slider-fg{
+    height:100%
+}
+.dg .c input[type=checkbox]{
+    margin-top:4px
+}
+.dg .c select {
+	margin-top : 2px;
+	font-family: "Roboto Mono",monospace;
+	border-radius: 4px;
+	border-style: none;
+	font-size : 11px;
+	text-align: center;
+	padding : 1px 0 1px 0;
+	width : 90%;
+	background-color : #303030;
+	color : #2fa1d6;
+}
+.dg .cr.function,.dg .cr.function .property-name,.dg .cr.function *,.dg .cr.boolean,.dg .cr.boolean *{
+    cursor:pointer
+}
+.dg .cr.color{
+    overflow:visible;
+	border-left:3px solid
+}
+.dg .selector{
+    display:none;
+    position:absolute;
+    margin-left:-9px;
+    margin-top:23px;
+    z-index:10
+}
+.dg .c:hover .selector,.dg .selector.drag{
+    display:block
+}
+.dg li.save-row{
+    padding:0
+}
+.dg li.save-row .button{
+    display:inline-block;
+    padding:0px 6px
+}
+.dg.dialogue{
+    background-color:#222;
+    width:460px;
+	padding-left : 5px;
+    font-size : 7px;
+	font-family: "Roboto Mono", cursive;
+    line-height : 18px
+}
+#dg-new-constructor{
+    padding:10px;
+    color:#222;
+    font-family:Monaco, monospace;
+    font-size:7px;
+    border:0;
+    resize:none;
+    box-shadow:inset 1px 1px 1px #888;
+    word-wrap:break-word;
+    margin:12px 0;
+    display:block;
+    width:440px;
+    overflow-y:scroll;
+    height:100px;
+    position:relative
+}
+#dg-local-explain{
+    display:none;
+    font-size:7px;
+    line-height:18px;
+    border-radius:3px;
+    background-color:#333;
+    padding:8px;
+    margin-top:10px
+}
+#dg-local-explain code{
+    font-size:px
+}
+#dat-gui-save-locally{
+    display:none
+}
+.dg {
+    color: #eee;
+	border-radius : 4px;
+    font: 9px "Roboto Mono", monospace;
+    text-shadow:0 -1px 0 #111
+}
+.dg.main::-webkit-scrollbar{
+    width:5px;
+    background:#1a1a1a
+}
+.dg.main::-webkit-scrollbar-corner{
+    height:0;
+    display:none
+}
+.dg.main::-webkit-scrollbar-thumb{
+    border-radius:5px;
+    background:#676767
+}
+.dg li:not(.folder){
+    background:#1a1a1a;
+    border-bottom:1px solid #2c2c2c
+}
+.dg li.save-row{
+    line-height:18px;
+    background:#dad5cb;
+    border:0
+}
+.dg li.save-row select{
+    margin-left:5px;
+    width:108px
+}
+.dg li.save-row .button{
+    margin-left:5px;
+    margin-top:1px;
+    border-radius:2px;
+    font-size:7px;
+    line-height:7px;
+    padding:4px 4px 5px 4px;
+    background:#c5bdad;
+    color:#fff;
+    text-shadow:0 1px 0 #b0a58f;
+    box-shadow:0 -1px 0 #b0a58f;
+    cursor:pointer
+}
+.dg li.save-row .button.gears{
+    background:#c5bdad url("gear.png") 2px 1px no-repeat;
+    height:7px;
+    width:8px
+}
+.dg li.save-row .button:hover{
+    background-color:#bab19e;
+    box-shadow:0 -1px 0 #b0a58f
+}
+.dg li.folder{
+    border-bottom:0;
+	border-radius : 4px;
+}
+.dg li.title{
+    padding-left:16px;
+    background:#111 url("titleopen.gif") 6px 10px no-repeat;
+    cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,0.2);
+}
+.dg .closed li.title{
+    background-image: url("titleclosed.gif");
+}
+.dg .cr.boolean{
+    border-left:3px solid #806787
+}
+.dg .cr.function{
+    border-left:3px solid #e61d5f
+}
+.dg .cr.number{
+    border-left:3px solid #2FA1D6
+}
+.dg .cr.number input[type=text]{
+    color:#2FA1D6
+}
+.dg .cr.string{
+    border-left:3px solid #1ed36f
+}
+.dg .cr.string input[type=text]{
+    color:#1ed36f
+}
+.dg .cr.function:hover,.dg .cr.boolean:hover{
+    background:#111
+}
+.dg .c input[type=text]{
+	border-radius : 4px;
+	font-size : 11px;
+	font-family : "Roboto Mono", monospace;
+    background:#303030;
+	text-align: center;
+	padding-left : 0px;
+	margin-left : 0px;
+	
+}
+.dg .c input[type=text]:hover{
+    background:#4d4d4d;
+	color : #5daed4;
+}
+.dg .c input[type=text]:focus{
+    background:#494949;
+    color:#fff
+}
+.dg .c .slider{
+    background:#303030;
+    cursor:ew-resize;
+	border-radius : 4px;
+}
+.dg .c .slider-fg{
+    background:#2FA1D6;
+    max-width:100%;
+	border-radius : 4px;
+}
+.dg .c .slider:hover{
+    background:#4d4d4d
+}
+.dg .c .slider:hover .slider-fg{
+    background:#5daed4
+}
+
+#Colour > div > div > input[type=text] {
+	font-size : 0;
+	padding-bottom : 14;
+	user-select: none;
+	width: 90%;
+}	
+
+#Background > div > div > input[type=text] {
+	font-size : 0;
+	padding-bottom : 14;
+	user-select: none;
+	width: 90%;
+}
